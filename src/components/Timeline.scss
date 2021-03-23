@@ -2,6 +2,7 @@
 @import "../mixin.scss";
 
 .timeline {
+  position: relative;
   background-color: gray; // for test
   width: 100%;
   white-space: nowrap;
@@ -16,4 +17,11 @@
   display: inline-block;
   width: 400px;
   padding: 16px 0;
+}
+
+.position-indicator {
+  position: absolute;
+  background-color: $force-background;
+  width: 1px;
+  height: 100%;
 }
