@@ -2,15 +2,18 @@
 @import "../mixin.scss";
 
 .timeline {
-  position: relative;
   background-color: gray; // for test
   width: 100%;
-  white-space: nowrap;
-  overflow: scroll;
   padding: 0 24px;
   box-sizing: border-box;
 
-  @include scrollbar-horizontal;
+  .wrapper {
+    position: relative;
+    background-color: white; //for test
+    white-space: nowrap;
+    overflow: scroll;
+    @include scrollbar-horizontal;
+  }
 }
 
 .timestep {
@@ -21,6 +24,7 @@
 
 .position-indicator {
   position: absolute;
+  left: 0;
   background-color: $force-background;
   width: 1px;
   height: 100%;

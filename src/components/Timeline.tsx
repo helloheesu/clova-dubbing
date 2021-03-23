@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Timeline.scss";
 
 type millisecond = number;
@@ -35,10 +35,22 @@ const TimeStep = ({ time }: timeIndicatorProps) => (
 );
 
 const CurrentPositionIndicator = ({ time }: timeIndicatorProps) => {
-  return <div className="position-indicator">{time}</div>;
+  return (
+    <div className="position-indicator" style={{ left: time }}>
+      {time}
+    </div>
+  );
 };
 
 const Timeline = ({ length, scale }: timelineProps) => {
+  const [currentPosition, setCurrentPosition] = useState(0);
+
+  const handleClick = (e) => {
+    const offsetX = e.nativeEvent.offsetX;
+    const offsetLeft = e.target.offsetLeft;
+    setCurrentPosition(offsetX + offsetLeft);
+  };
+
   const timesteps = Array.apply(
     null,
     Array(Math.floor(length / scale) + 1)
@@ -46,8 +58,10 @@ const Timeline = ({ length, scale }: timelineProps) => {
 
   return (
     <div className="timeline">
-      <CurrentPositionIndicator time={0} />
-      {timesteps}
+      <div className="wrapper" onClick={handleClick}>
+        <CurrentPositionIndicator time={currentPosition} />
+        {timesteps}
+      </div>
     </div>
   );
 };
