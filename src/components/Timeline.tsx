@@ -14,18 +14,20 @@ interface props {
 const STEP_WIDTH: pixel = 400;
 
 const Timeline = ({ length, scale }: props) => {
-  const [currentPosition, setCurrentPosition] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  const positionToTime = (position: pixel) => {
+  const positionToTime = (position: pixel): millisecond => {
     return (position * scale) / STEP_WIDTH;
+  };
+
+  const timeToPosition = (time: millisecond): pixel => {
+    return (time * STEP_WIDTH) / scale;
   };
 
   const handleClick = (e) => {
     const offsetX = e.nativeEvent.offsetX;
     const offsetLeft = e.target.offsetLeft;
     const position = offsetX + offsetLeft;
-    setCurrentPosition(position);
     setCurrentTime(positionToTime(position));
   };
 
@@ -38,7 +40,7 @@ const Timeline = ({ length, scale }: props) => {
     <div className="timeline">
       <div className="wrapper" onClick={handleClick}>
         <CurrentPositionIndicator
-          position={currentPosition}
+          position={timeToPosition(currentTime)}
           time={localeMs(currentTime)}
         />
         {timesteps}
