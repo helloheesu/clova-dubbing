@@ -1,4 +1,12 @@
 .timeline {
-  width: 100%;
+  padding: 10px; // for test
   background-color: gray; // for test
+  width: 100%;
+  white-space: nowrap;
+}
+
+.timestep {
+  background-color: white; // for test
+  display: inline-block;
+  width: 400px; // for test; original size: 160px;
 }
