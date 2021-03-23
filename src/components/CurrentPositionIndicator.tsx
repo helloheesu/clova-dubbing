@@ -1,7 +1,7 @@
 import React from "react";
 
 interface props {
-  position: number;
+  position: pixel;
   time: string;
 }
 

@@ -11,13 +11,13 @@ interface props {
   scale: millisecond;
 }
 
-const STEP_WIDTH = 400;
+const STEP_WIDTH: pixel = 400;
 
 const Timeline = ({ length, scale }: props) => {
   const [currentPosition, setCurrentPosition] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  const positionToTime = (position: number) => {
+  const positionToTime = (position: pixel) => {
     return (position * scale) / STEP_WIDTH;
   };
 
