@@ -28,7 +28,7 @@ const Timeline = ({ length, scale }: props) => {
     const offsetX = e.nativeEvent.offsetX;
     const offsetLeft = e.target.offsetLeft;
     const position = offsetX + offsetLeft;
-    setCurrentTime(positionToTime(position));
+    setCurrentTime(Math.min(positionToTime(position), length));
   };
 
   const playingFrameRef = useRef(null);
@@ -38,7 +38,6 @@ const Timeline = ({ length, scale }: props) => {
     }
 
     if (playingFrameRef.current) {
-      cancelAnimationFrame(playingFrameRef.current);
       playingFrameRef.current = null;
       return;
     }
@@ -48,9 +47,18 @@ const Timeline = ({ length, scale }: props) => {
       const delta = previousTime ? time - previousTime : 0;
       previousTime = time;
 
-      setCurrentTime((currentTime) => currentTime + delta);
+      setCurrentTime((currentTime) => {
+        if (currentTime + delta > length) {
+          playingFrameRef.current = null;
+          return length;
+        } else {
+          return currentTime + delta;
+        }
+      });
 
-      playingFrameRef.current = requestAnimationFrame(step);
+      if (playingFrameRef.current) {
+        playingFrameRef.current = requestAnimationFrame(step);
+      }
     };
 
     playingFrameRef.current = requestAnimationFrame(step);
