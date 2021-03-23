@@ -15,10 +15,18 @@
 
 UI 구성 요소
 
-- 전체 컨테이너 (Timeline)
+- 전체 컨테이너 (ProgressBar)
   - 드래그등으로 뷰포트 내 이동 가능해야함
-- 시간 표시바 (ProgressBar)
+- 시간 표시바 (Timeline)
 - 현재 위치 표시 (CurrentPositionIndicator)
   - 선(::after)
   - 시간(TimeDisplay)
 - (추가기능) 마우스 위치 표시 (HoverPositionIndicator)
+
+구현 순서
+
+[ ] 단위간 고정폭으로 20초 분할 표시
+[ ] 뷰표트를 브라우저 폭에 맞춤, 드래그로 이동
+[ ] 스페이스바로 현재 위치 이동
+[ ] 마우스 호버 표시
+[ ] 클릭시 현재 위치 이동

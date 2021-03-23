@@ -1,4 +1,5 @@
 import React from "react";
+import ProgressBar from "./components/ProgressBar";
 
-const App = (props) => <div>{props.children}</div>;
+const App = () => <ProgressBar length={20000} scale={5000} />;
 export default App;
