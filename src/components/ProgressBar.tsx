@@ -1,7 +1,6 @@
 import React from "react";
 import Timeline from "./Timeline";
 
-type millisecond = number;
 interface props {
   length: millisecond;
   scale: millisecond;

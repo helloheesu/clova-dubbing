@@ -14,18 +14,18 @@
     overflow: scroll;
     @include scrollbar-horizontal;
   }
-}
 
-.timestep {
-  display: inline-block;
-  width: 400px;
-  padding: 16px 0;
-}
+  .timestep {
+    display: inline-block;
+    width: 400px;
+    padding: 16px 0;
+  }
 
-.position-indicator {
-  position: absolute;
-  left: 0;
-  background-color: $force-background;
-  width: 1px;
-  height: 100%;
+  .position-indicator {
+    position: absolute;
+    left: 0;
+    background-color: $force-background;
+    width: 1px;
+    height: 100%;
+  }
 }
