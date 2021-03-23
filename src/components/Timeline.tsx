@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { localeMs } from "../utils/time";
 
 import TimeStep from "./TimeStep";
 import CurrentPositionIndicator from "./CurrentPositionIndicator";
@@ -10,13 +11,22 @@ interface props {
   scale: millisecond;
 }
 
+const STEP_WIDTH = 400;
+
 const Timeline = ({ length, scale }: props) => {
   const [currentPosition, setCurrentPosition] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const positionToTime = (position: number) => {
+    return (position * scale) / STEP_WIDTH;
+  };
 
   const handleClick = (e) => {
     const offsetX = e.nativeEvent.offsetX;
     const offsetLeft = e.target.offsetLeft;
-    setCurrentPosition(offsetX + offsetLeft);
+    const position = offsetX + offsetLeft;
+    setCurrentPosition(position);
+    setCurrentTime(positionToTime(position));
   };
 
   const timesteps = Array.apply(
@@ -27,7 +37,10 @@ const Timeline = ({ length, scale }: props) => {
   return (
     <div className="timeline">
       <div className="wrapper" onClick={handleClick}>
-        <CurrentPositionIndicator position={currentPosition} />
+        <CurrentPositionIndicator
+          position={currentPosition}
+          time={localeMs(currentTime)}
+        />
         {timesteps}
       </div>
     </div>
