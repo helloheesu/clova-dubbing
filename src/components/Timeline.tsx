@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { localeMs } from "../utils/time";
 
 import TimeStep from "./TimeStep";
@@ -31,13 +31,38 @@ const Timeline = ({ length, scale }: props) => {
     setCurrentTime(positionToTime(position));
   };
 
+  const playingFrameRef = useRef(null);
+  const handleKeyDown = ({ code }) => {
+    if (code !== "Space") {
+      return;
+    }
+
+    if (playingFrameRef.current) {
+      cancelAnimationFrame(playingFrameRef.current);
+      playingFrameRef.current = null;
+      return;
+    }
+
+    let previousTime = null;
+    const step = (time) => {
+      const delta = previousTime ? time - previousTime : 0;
+      previousTime = time;
+
+      setCurrentTime((currentTime) => currentTime + delta);
+
+      playingFrameRef.current = requestAnimationFrame(step);
+    };
+
+    playingFrameRef.current = requestAnimationFrame(step);
+  };
+
   const timesteps = Array.apply(
     null,
     Array(Math.floor(length / scale) + 1)
   ).map((_, i) => <TimeStep key={i * scale} time={i * scale} />);
 
   return (
-    <div className="timeline">
+    <div className="timeline" tabIndex={0} onKeyPress={handleKeyDown}>
       <div className="wrapper" onClick={handleClick}>
         <CurrentPositionIndicator
           position={timeToPosition(currentTime)}
