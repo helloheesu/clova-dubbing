@@ -1,12 +1,36 @@
+@import "../const.scss";
+
 .timeline {
-  padding: 10px; // for test
   background-color: gray; // for test
   width: 100%;
   white-space: nowrap;
+  overflow: scroll;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scroll-bar;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-clip: content-box;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    margin: 0 1px;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
 }
 
 .timestep {
-  background-color: white; // for test
   display: inline-block;
-  width: 400px; // for test; original size: 160px;
+  width: 400px;
+  padding: 16px 0;
 }
