@@ -1,0 +1,28 @@
+@mixin reset {
+  body {
+    margin: 0;
+  }
+}
+
+@mixin scrollbar-horizontal {
+  &::-webkit-scrollbar {
+    height: 12px;
+    width: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scroll-bar;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-clip: content-box;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    margin: 0 1px;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}

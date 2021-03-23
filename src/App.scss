@@ -1,4 +1,7 @@
 @import "./const.scss";
+@import "./mixin.scss";
+
+@include reset;
 
 body {
   background-color: $secondary-background;

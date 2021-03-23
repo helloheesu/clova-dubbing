@@ -1,4 +1,5 @@
 @import "../const.scss";
+@import "../mixin.scss";
 
 .timeline {
   background-color: gray; // for test
@@ -8,25 +9,7 @@
   padding: 0 24px;
   box-sizing: border-box;
 
-  &::-webkit-scrollbar {
-    height: 12px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: $scroll-bar;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    background-clip: content-box;
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-    margin: 0 1px;
-  }
-
-  &::-webkit-scrollbar-corner {
-    background-color: transparent;
-  }
+  @include scrollbar-horizontal;
 }
 
 .timestep {
