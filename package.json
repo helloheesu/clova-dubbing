@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel src/index.html",
+    "clean": "rm -rf .cache/ && rm -rf dist/ && npm run start"
   },
   "keywords": [],
   "author": "",
