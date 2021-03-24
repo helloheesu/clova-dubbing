@@ -8,7 +8,7 @@ interface props {
 const CurrentPositionIndicator = ({ position, time }: props) => {
   return (
     <div className="position-indicator" style={{ left: position }}>
-      {time}
+      <span>{time}</span>
     </div>
   );
 };
