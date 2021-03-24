@@ -4,19 +4,22 @@
 .timeline {
   background-color: gray; // for test
   width: 100%;
-  padding: 0 24px;
   box-sizing: border-box;
   outline: none;
 
+  position: relative;
+  white-space: nowrap;
+  overflow: scroll;
+  @include scrollbar-horizontal;
+
   .wrapper {
-    position: relative;
-    padding-bottom: 16px;
-    white-space: nowrap;
-    overflow: scroll;
-    @include scrollbar-horizontal;
+    display: inline-block;
+    margin: 0 24px 16px;
+    background-color: black; // for test
   }
 
   .timestep {
+    background-color: lightgray; // for test
     display: inline-block;
     width: 400px;
     padding: 16px 0;

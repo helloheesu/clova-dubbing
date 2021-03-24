@@ -12,16 +12,17 @@ interface props {
 }
 
 const STEP_WIDTH: pixel = 400;
+const LEFT_PADDING: pixel = 24;
 
 const ProgressBar = ({ length, scale }: props) => {
   const [currentTime, setCurrentTime] = useState(0);
 
   const positionToTime = (position: pixel): millisecond => {
-    return (position * scale) / STEP_WIDTH;
+    return ((position - LEFT_PADDING) * scale) / STEP_WIDTH;
   };
 
   const timeToPosition = (time: millisecond): pixel => {
-    return (time * STEP_WIDTH) / scale;
+    return (time * STEP_WIDTH) / scale + LEFT_PADDING;
   };
 
   const handleClick = (e) => {
@@ -77,6 +78,12 @@ const ProgressBar = ({ length, scale }: props) => {
           time={localeMs(currentTime)}
         />
         {timesteps}
+        <div
+          className="audio-box-timeline"
+          style={{ backgroundColor: "yellow", height: "200px" }}
+        >
+          audio-box-timeline skeleton
+        </div>
       </div>
     </div>
   );
