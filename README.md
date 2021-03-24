@@ -18,7 +18,6 @@
        - cmd+좌우: 맨끝 이동
      - 드래그해서 현재 위치 이동
      - 확대/축소
-     - 스크롤 영역 변경 - indicator를 wrapper 바깥으로 && 스크롤 영역을 wrapper 바깥으로
 
 ## 타임라인 이동 및 재생
 
@@ -26,10 +25,10 @@ UI 구성 요소
 
 - 전체 컨테이너 (ProgressBar)
   - 드래그등으로 뷰포트 내 이동 가능해야함
-- 시간 표시바 (Timeline)
+- 시간 표시바 (TimeDisplay)
 - 현재 위치 표시 (CurrentPositionIndicator)
-  - 선(::after)
-  - 시간(TimeDisplay)
+  - 선
+  - 시간
 
 구현 순서
 
@@ -41,3 +40,23 @@ UI 구성 요소
 [x] 스페이스바로 재생/일시정지
 [x] 재생시 최대 길이 이후로는 자동 일시정지
 [x] 클릭시 최대 길이까지만 이동
+
+## 음원박스 추가 및 재생
+
+구현 순서
+
+[ ] 음원 재생하는 버튼 구현 (Auido API 학습)
+[ ] 마크업 구조 변경 - 스크롤 영역을 상위 프로그래스바로 옮겨야함. 아래 구성 요소 참고.
+[ ] 현재 위치에 음원 추가 (추가 후 현재 위치를 음원길이만큼 뒤로 이동)
+[ ] 재생시 현재 위치에 음원이 있으면 음원 재생
+
+UI 구성 요소
+
+- ProgressBar > CurrentPositionIndicator, TimeDisplay, AudioBoxTimeline
+- 음원 추가 버튼 리스트 (AudioAddForm)
+  - 음원 추가 버튼 (AudioAddButton)
+    - 음원 이름 디스플레이
+    - 재생 버튼 (PlayButton)
+    - 추가 버튼 (AddButton)
+- 음원박스 타임라인 (AudioBoxTimeline)
+  - 음원 박스 (AudioBox)
