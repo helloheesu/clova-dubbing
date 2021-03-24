@@ -25,7 +25,7 @@
 
 UI 구성 요소
 
-- 전체 컨테이너 (Timeline)
+- 전체 컨테이너 (ProgressBar)
   - 드래그등으로 뷰포트 내 이동 가능해야함
 - 시간 표시바 (TimeDisplay)
 - 현재 위치 표시 (CurrentPositionIndicator)
@@ -48,13 +48,13 @@ UI 구성 요소
 구현 순서
 
 [x] 음원 재생하는 버튼 구현 (Auido API 학습)
-[ ] 마크업 구조 변경 - 스크롤 영역을 상위 컨테이너(Timeline)로 옮겨야함. 아래 구성 요소 참고.
+[ ] 마크업 구조 변경 - 스크롤 영역을 상위 컨테이너(ProgressBar)로 옮겨야함. 아래 구성 요소 참고.
 [ ] 현재 위치에 음원 추가 (추가 후 현재 위치를 음원길이만큼 뒤로 이동)
 [ ] 재생시 현재 위치에 음원이 있으면 음원 재생
 
 UI 구성 요소
 
-- Timeline > CurrentPositionIndicator, TimeDisplay, AudioBoxTimeline
+- ProgressBar > CurrentPositionIndicator, TimeDisplay, AudioBoxTimeline
 - 음원 추가 버튼 리스트 (AudioAddForm)
   - 음원 추가 버튼 (AudioAddButton)
     - 음원 이름 디스플레이

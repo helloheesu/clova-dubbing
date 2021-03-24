@@ -13,7 +13,7 @@ interface props {
 
 const STEP_WIDTH: pixel = 400;
 
-const Timeline = ({ length, scale }: props) => {
+const ProgressBar = ({ length, scale }: props) => {
   const [currentTime, setCurrentTime] = useState(0);
 
   const positionToTime = (position: pixel): millisecond => {
@@ -82,4 +82,4 @@ const Timeline = ({ length, scale }: props) => {
   );
 };
 
-export default Timeline;
+export default ProgressBar;
