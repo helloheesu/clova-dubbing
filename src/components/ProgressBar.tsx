@@ -68,7 +68,9 @@ const ProgressBar = ({
   const timesteps = Array.apply(
     null,
     Array(Math.floor(length / scale) + 1)
-  ).map((_, i) => <TimeStep key={i * scale} time={i * scale} />);
+  ).map((_, i) => (
+    <TimeStep key={i * scale} time={i * scale} width={stepWidth} />
+  ));
 
   return (
     <div className="timeline" tabIndex={0} onKeyPress={handleKeyDown}>
