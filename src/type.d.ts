@@ -7,3 +7,8 @@ type AudioSource = {
   name: string;
   duration: millisecond;
 };
+
+type AudioBox = {
+  src: AudioSource;
+  startAt: millisecond;
+};

@@ -20,16 +20,22 @@ const AUDIO_SAMPLES: AudioSource[] = [
   },
 ];
 
-const AudioAddForm = () => {
+interface Props {
+  onAddAudio: (source: AudioSource) => void;
+}
+const AudioAddForm = ({ onAddAudio }: Props) => {
   return (
     <ul className="audio-add-form">
-      {AUDIO_SAMPLES.map(({ name, url }) => (
-        <li key={url} className="audio-add-button">
-          <PlayButton url={url} />
-          {name}
-          <button>➕</button>
-        </li>
-      ))}
+      {AUDIO_SAMPLES.map((src) => {
+        const { name, url } = src;
+        return (
+          <li key={url} className="audio-add-button">
+            <PlayButton url={url} />
+            {name}
+            <button onClick={() => onAddAudio(src)}>➕</button>
+          </li>
+        );
+      })}
     </ul>
   );
 };

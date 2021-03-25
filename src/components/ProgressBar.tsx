@@ -10,11 +10,12 @@ interface props {
   length: millisecond;
   scale: millisecond;
   currentTimeRef: React.MutableRefObject<millisecond>;
+  audioBoxs: AudioBox[];
 }
 
 const STEP_WIDTH: pixel = 400;
 
-const ProgressBar = ({ length, scale, currentTimeRef }: props) => {
+const ProgressBar = ({ length, scale, currentTimeRef, audioBoxs }: props) => {
   const [currentTime, setCurrentTime] = useState(0);
 
   const positionToTime = (position: pixel): millisecond => {
@@ -82,12 +83,21 @@ const ProgressBar = ({ length, scale, currentTimeRef }: props) => {
           time={localeMs(currentTime)}
         />
         {timesteps}
-        <div
+        <ul
           className="audio-box-timeline"
           style={{ backgroundColor: "yellow", height: "200px" }}
         >
-          audio-box-timeline skeleton
-        </div>
+          {audioBoxs.map(({ src, startAt }) => {
+            return (
+              <li
+                className="audio-box"
+                style={{ width: timeToPosition(src.duration) }}
+              >
+                {localeMs(startAt)} {src.name}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
