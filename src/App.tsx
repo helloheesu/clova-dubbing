@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.scss";
 import ProgressBar from "./components/ProgressBar";
 import AudioAddForm from "./components/AudioAddForm";
+import AudioTimeline from "./components/AudioTimeline";
 
 const App = () => {
   const [currentTime, setCurrentTime] = useState(0);
@@ -30,8 +31,9 @@ const App = () => {
         scale={5000}
         currentTime={currentTime}
         setCurrentTime={setCurrentTime}
-        audioBoxs={audioBoxs}
-      />
+      >
+        <AudioTimeline audioBoxs={audioBoxs} scale={5000} />
+      </ProgressBar>
     </>
   );
 };

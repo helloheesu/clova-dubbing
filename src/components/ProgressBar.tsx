@@ -11,7 +11,7 @@ interface props {
   scale: millisecond;
   currentTime: millisecond;
   setCurrentTime: React.Dispatch<React.SetStateAction<millisecond>>;
-  audioBoxs: AudioBox[];
+  children: React.ReactNode;
 }
 
 const ProgressBar = ({
@@ -19,7 +19,7 @@ const ProgressBar = ({
   scale,
   currentTime,
   setCurrentTime,
-  audioBoxs,
+  children,
 }: props) => {
   const handleClick = (e) => {
     const offsetX = e.nativeEvent.offsetX;
@@ -74,24 +74,7 @@ const ProgressBar = ({
           time={localeMs(currentTime)}
         />
         {timesteps}
-        <ul
-          className="audio-box-timeline"
-          style={{ backgroundColor: "yellow", height: "200px" }}
-        >
-          {audioBoxs.map(({ src, startAt }) => {
-            return (
-              <li
-                className="audio-box"
-                style={{
-                  width: timeToPosition(src.duration, scale),
-                  left: `${timeToPosition(startAt, scale)}px`,
-                }}
-              >
-                {localeMs(startAt)} {src.name}
-              </li>
-            );
-          })}
-        </ul>
+        {children}
       </div>
     </div>
   );
