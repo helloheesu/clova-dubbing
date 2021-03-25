@@ -8,3 +8,16 @@ export const audioBoxsState = atom<AudioBox[]>({
   key: "audioBoxs",
   default: [],
 });
+export const totalInfoState = atom({
+  key: "totalInfo",
+  default: {
+    duration: 2000000,
+  },
+});
+export const stepInfoState = atom({
+  key: "stepInfo",
+  default: {
+    duration: 5000,
+    width: 160,
+  },
+});

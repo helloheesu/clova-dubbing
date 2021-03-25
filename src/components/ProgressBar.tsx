@@ -5,17 +5,22 @@ import TimeStep from "./TimeStep";
 import CurrentPositionIndicator from "./CurrentPositionIndicator";
 
 import "./Timeline.scss";
-import { useRecoilState } from "recoil";
-import { currentTimeState } from "../recoil/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  currentTimeState,
+  stepInfoState,
+  totalInfoState,
+} from "../recoil/atoms";
 
 interface props {
-  length: millisecond;
-  scale: millisecond;
-  stepWidth: pixel;
   children: React.ReactNode;
 }
 
-const ProgressBar = ({ length, scale, stepWidth, children }: props) => {
+const ProgressBar = ({ children }: props) => {
+  const { duration: totalDuration } = useRecoilValue(totalInfoState);
+  const { duration: stepDuration, width: stepWidth } = useRecoilValue(
+    stepInfoState
+  );
   const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
 
   const handleClick = (e) => {
@@ -23,7 +28,7 @@ const ProgressBar = ({ length, scale, stepWidth, children }: props) => {
     const offsetLeft = e.target.offsetLeft;
     const position = offsetX + offsetLeft;
     setCurrentTime(
-      Math.min(positionToTime(position, scale, stepWidth), length)
+      Math.min(positionToTime(position, stepDuration, stepWidth), totalDuration)
     );
   };
 
@@ -44,9 +49,9 @@ const ProgressBar = ({ length, scale, stepWidth, children }: props) => {
       previousTime = time;
 
       setCurrentTime((currentTime) => {
-        if (currentTime + delta > length) {
+        if (currentTime + delta > totalDuration) {
           playingFrameRef.current = null;
-          return length;
+          return totalDuration;
         } else {
           return currentTime + delta;
         }
@@ -62,16 +67,20 @@ const ProgressBar = ({ length, scale, stepWidth, children }: props) => {
 
   const timesteps = Array.apply(
     null,
-    Array(Math.floor(length / scale) + 1)
+    Array(Math.floor(totalDuration / stepDuration) + 1)
   ).map((_, i) => (
-    <TimeStep key={i * scale} time={i * scale} width={stepWidth} />
+    <TimeStep
+      key={i * stepDuration}
+      time={i * stepDuration}
+      width={stepWidth}
+    />
   ));
 
   return (
     <div className="timeline" tabIndex={0} onKeyPress={handleKeyDown}>
       <div className="wrapper" onClick={handleClick}>
         <CurrentPositionIndicator
-          position={timeToPosition(currentTime, scale, stepWidth)}
+          position={timeToPosition(currentTime, stepDuration, stepWidth)}
           time={localeMs(currentTime)}
         />
         {timesteps}

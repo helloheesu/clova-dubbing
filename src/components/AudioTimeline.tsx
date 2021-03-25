@@ -1,13 +1,12 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
-import { audioBoxsState } from "../recoil/atoms";
+import { audioBoxsState, stepInfoState } from "../recoil/atoms";
 import { localeMs, timeToPosition } from "../utils/time";
 
-interface Props {
-  scale: millisecond;
-  stepWidth: pixel;
-}
-const AudioTimeline = ({ scale, stepWidth }: Props) => {
+const AudioTimeline = () => {
+  const { duration: stepDuration, width: stepWidth } = useRecoilValue(
+    stepInfoState
+  );
   const audioBoxs = useRecoilValue(audioBoxsState);
 
   return (
@@ -18,10 +17,11 @@ const AudioTimeline = ({ scale, stepWidth }: Props) => {
       {audioBoxs.map(({ src, startAt }) => {
         return (
           <li
+            key={`${startAt}-${src.url}`}
             className="audio-box"
             style={{
-              width: timeToPosition(src.duration, scale, stepWidth),
-              left: `${timeToPosition(startAt, scale, stepWidth)}px`,
+              width: timeToPosition(src.duration, stepDuration, stepWidth),
+              left: `${timeToPosition(startAt, stepDuration, stepWidth)}px`,
             }}
           >
             {localeMs(startAt)} {src.name}
