@@ -12,3 +12,19 @@ export const localeMs = (ms: millisecond) => {
 
   return `${minute}:${second}`;
 };
+
+const STEP_WIDTH: pixel = 400;
+
+export const positionToTime = (
+  position: pixel,
+  scale: millisecond
+): millisecond => {
+  return (position * scale) / STEP_WIDTH;
+};
+
+export const timeToPosition = (
+  time: millisecond,
+  scale: millisecond
+): pixel => {
+  return (time * STEP_WIDTH) / scale;
+};

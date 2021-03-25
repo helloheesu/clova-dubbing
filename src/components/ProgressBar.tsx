@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { localeMs } from "../utils/time";
+import { localeMs, positionToTime, timeToPosition } from "../utils/time";
 
 import TimeStep from "./TimeStep";
 import CurrentPositionIndicator from "./CurrentPositionIndicator";
@@ -13,24 +13,14 @@ interface props {
   audioBoxs: AudioBox[];
 }
 
-const STEP_WIDTH: pixel = 400;
-
 const ProgressBar = ({ length, scale, currentTimeRef, audioBoxs }: props) => {
   const [currentTime, setCurrentTime] = useState(0);
-
-  const positionToTime = (position: pixel): millisecond => {
-    return (position * scale) / STEP_WIDTH;
-  };
-
-  const timeToPosition = (time: millisecond): pixel => {
-    return (time * STEP_WIDTH) / scale;
-  };
 
   const handleClick = (e) => {
     const offsetX = e.nativeEvent.offsetX;
     const offsetLeft = e.target.offsetLeft;
     const position = offsetX + offsetLeft;
-    setCurrentTime(Math.min(positionToTime(position), length));
+    setCurrentTime(Math.min(positionToTime(position, scale), length));
   };
 
   const playingFrameRef = useRef(null);
@@ -79,7 +69,7 @@ const ProgressBar = ({ length, scale, currentTimeRef, audioBoxs }: props) => {
     <div className="timeline" tabIndex={0} onKeyPress={handleKeyDown}>
       <div className="wrapper" onClick={handleClick}>
         <CurrentPositionIndicator
-          position={timeToPosition(currentTime)}
+          position={timeToPosition(currentTime, scale)}
           time={localeMs(currentTime)}
         />
         {timesteps}
