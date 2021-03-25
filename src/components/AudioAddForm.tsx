@@ -3,17 +3,16 @@ import "./AudioAddForm.scss";
 
 const AUDIO_SAMPLES = [
   {
-    name: "테스트 음원 1",
-    url:
-      "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3",
+    name: "CantinaBand3sec",
+    url: "https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand3.wav",
   },
   {
-    name: "테스트 음원 2",
-    url: "https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.mp3",
+    name: "preamble",
+    url: "https://www2.cs.uic.edu/~i101/SoundFiles/preamble.wav",
   },
   {
-    name: "테스트 음원 3",
-    url: "https://dl.espressif.com/dl/audio/gs-16b-1c-44100hz.mp3",
+    name: "taunt",
+    url: "https://www2.cs.uic.edu/~i101/SoundFiles/taunt.wav",
   },
 ];
 
