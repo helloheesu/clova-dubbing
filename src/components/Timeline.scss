@@ -28,6 +28,7 @@
 
   .position-indicator {
     position: absolute;
+    z-index: 1;
     left: 0;
     background-color: $force-background;
     width: 1px;
@@ -44,11 +45,14 @@
 }
 
 .audio-box-timeline {
+  position: relative;
+
   .audio-box {
     background-color: black;
     border-radius: 3px;
     border: 1px solid yellow;
     box-sizing: border-box;
     display: inline-block;
+    position: absolute;
   }
 }

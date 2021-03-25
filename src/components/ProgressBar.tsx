@@ -81,7 +81,10 @@ const ProgressBar = ({ length, scale, currentTimeRef, audioBoxs }: props) => {
             return (
               <li
                 className="audio-box"
-                style={{ width: timeToPosition(src.duration) }}
+                style={{
+                  width: timeToPosition(src.duration, scale),
+                  left: `${timeToPosition(startAt, scale)}px`,
+                }}
               >
                 {localeMs(startAt)} {src.name}
               </li>
