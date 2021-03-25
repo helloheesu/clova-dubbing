@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { localeMs, positionToTime, timeToPosition } from "../utils/time";
 
 import TimeStep from "./TimeStep";
@@ -9,13 +9,18 @@ import "./Timeline.scss";
 interface props {
   length: millisecond;
   scale: millisecond;
-  currentTimeRef: React.MutableRefObject<millisecond>;
+  currentTime: millisecond;
+  setCurrentTime: React.Dispatch<React.SetStateAction<millisecond>>;
   audioBoxs: AudioBox[];
 }
 
-const ProgressBar = ({ length, scale, currentTimeRef, audioBoxs }: props) => {
-  const [currentTime, setCurrentTime] = useState(0);
-
+const ProgressBar = ({
+  length,
+  scale,
+  currentTime,
+  setCurrentTime,
+  audioBoxs,
+}: props) => {
   const handleClick = (e) => {
     const offsetX = e.nativeEvent.offsetX;
     const offsetLeft = e.target.offsetLeft;
@@ -55,10 +60,6 @@ const ProgressBar = ({ length, scale, currentTimeRef, audioBoxs }: props) => {
 
     playingFrameRef.current = requestAnimationFrame(step);
   };
-
-  useEffect(() => {
-    currentTimeRef.current = currentTime;
-  }, [currentTime]);
 
   const timesteps = Array.apply(
     null,

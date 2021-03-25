@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import "./App.scss";
 import ProgressBar from "./components/ProgressBar";
 import AudioAddForm from "./components/AudioAddForm";
 
 const App = () => {
-  const currentTimeRef = useRef(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const [audioBoxs, setAudioBoxs] = useState<AudioBox[]>([]);
 
   const addAudioBox = (src: AudioSource) => {
@@ -12,7 +12,7 @@ const App = () => {
       ...audioBoxs,
       {
         src,
-        startAt: currentTimeRef.current,
+        startAt: currentTime,
       },
     ]);
   };
@@ -23,7 +23,8 @@ const App = () => {
       <ProgressBar
         length={20000}
         scale={5000}
-        currentTimeRef={currentTimeRef}
+        currentTime={currentTime}
+        setCurrentTime={setCurrentTime}
         audioBoxs={audioBoxs}
       />
     </>
