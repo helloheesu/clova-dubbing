@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import PlayButton from "./PlayButton";
 import "./AudioAddForm.scss";
 
 const AUDIO_SAMPLES: AudioSource[] = [
@@ -19,49 +20,18 @@ const AUDIO_SAMPLES: AudioSource[] = [
   },
 ];
 
-// ref: https://stackoverflow.com/a/47686478
-const useAudio = (url: url) => {
-  const [audio] = useState(new Audio(url));
-  const [playing, setPlaying] = useState(false);
-
-  const toggle = () => setPlaying(!playing);
-
-  useEffect(() => {
-    playing ? audio.play() : audio.pause();
-  }, [playing]);
-
-  const handleEndled = () => setPlaying(false);
-
-  useEffect(() => {
-    audio.addEventListener("ended", handleEndled);
-    return () => {
-      audio.removeEventListener("ended", handleEndled);
-    };
-  }, []);
-
-  return { playing, toggle };
-};
-
-interface Props {
-  url: url;
-  name: string;
-}
-const AudioAddButton = ({ url, name }: Props) => {
-  const { playing, toggle } = useAudio(url);
-
+const AudioAddForm = () => {
   return (
-    <div className="audio-add-button">
-      <button onClick={toggle}>{playing ? "⏸" : "▶️"}</button>
-      {name}
-      <button>➕</button>
-    </div>
+    <ul className="audio-add-form">
+      {AUDIO_SAMPLES.map(({ name, url }) => (
+        <li key={url} className="audio-add-button">
+          <PlayButton url={url} />
+          {name}
+          <button>➕</button>
+        </li>
+      ))}
+    </ul>
   );
 };
 
-const AudioAddForm = () => {
-  const audioAddButtons = AUDIO_SAMPLES.map(({ name, url }) => (
-    <AudioAddButton key={url} name={name} url={url} />
-  ));
-  return <div className="audio-add-form">{audioAddButtons}</div>;
-};
 export default AudioAddForm;
