@@ -9,6 +9,7 @@ import "./Timeline.scss";
 interface props {
   length: millisecond;
   scale: millisecond;
+  stepWidth: pixel;
   currentTime: millisecond;
   setCurrentTime: React.Dispatch<React.SetStateAction<millisecond>>;
   children: React.ReactNode;
@@ -17,6 +18,7 @@ interface props {
 const ProgressBar = ({
   length,
   scale,
+  stepWidth,
   currentTime,
   setCurrentTime,
   children,
@@ -25,7 +27,9 @@ const ProgressBar = ({
     const offsetX = e.nativeEvent.offsetX;
     const offsetLeft = e.target.offsetLeft;
     const position = offsetX + offsetLeft;
-    setCurrentTime(Math.min(positionToTime(position, scale), length));
+    setCurrentTime(
+      Math.min(positionToTime(position, scale, stepWidth), length)
+    );
   };
 
   const playingFrameRef = useRef(null);
@@ -70,7 +74,7 @@ const ProgressBar = ({
     <div className="timeline" tabIndex={0} onKeyPress={handleKeyDown}>
       <div className="wrapper" onClick={handleClick}>
         <CurrentPositionIndicator
-          position={timeToPosition(currentTime, scale)}
+          position={timeToPosition(currentTime, scale, stepWidth)}
           time={localeMs(currentTime)}
         />
         {timesteps}

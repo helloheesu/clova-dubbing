@@ -4,8 +4,9 @@ import { timeToPosition, localeMs } from "../utils/time";
 interface Props {
   audioBoxs: AudioBox[];
   scale: millisecond;
+  stepWidth: pixel;
 }
-const AudioTimeline = ({ audioBoxs, scale }: Props) => {
+const AudioTimeline = ({ audioBoxs, scale, stepWidth }: Props) => {
   return (
     <ul
       className="audio-box-timeline"
@@ -16,8 +17,8 @@ const AudioTimeline = ({ audioBoxs, scale }: Props) => {
           <li
             className="audio-box"
             style={{
-              width: timeToPosition(src.duration, scale),
-              left: `${timeToPosition(startAt, scale)}px`,
+              width: timeToPosition(src.duration, scale, stepWidth),
+              left: `${timeToPosition(startAt, scale, stepWidth)}px`,
             }}
           >
             {localeMs(startAt)} {src.name}
