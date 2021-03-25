@@ -13,6 +13,7 @@
   @include scrollbar-horizontal;
 
   .wrapper {
+    position: relative;
     display: inline-block;
     margin: 0 24px 16px;
     background-color: black; // for test
