@@ -1,12 +1,15 @@
 import React from "react";
-import { timeToPosition, localeMs } from "../utils/time";
+import { useRecoilValue } from "recoil";
+import { audioBoxsState } from "../recoil/atoms";
+import { localeMs, timeToPosition } from "../utils/time";
 
 interface Props {
-  audioBoxs: AudioBox[];
   scale: millisecond;
   stepWidth: pixel;
 }
-const AudioTimeline = ({ audioBoxs, scale, stepWidth }: Props) => {
+const AudioTimeline = ({ scale, stepWidth }: Props) => {
+  const audioBoxs = useRecoilValue(audioBoxsState);
+
   return (
     <ul
       className="audio-box-timeline"

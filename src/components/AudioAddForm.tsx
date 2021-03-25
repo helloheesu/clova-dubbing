@@ -1,6 +1,8 @@
 import React from "react";
 import PlayButton from "./PlayButton";
 import "./AudioAddForm.scss";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { audioBoxsState, currentTimeState } from "../recoil/atoms";
 
 const AUDIO_SAMPLES: AudioSource[] = [
   {
@@ -20,10 +22,24 @@ const AUDIO_SAMPLES: AudioSource[] = [
   },
 ];
 
-interface Props {
-  onAddAudio: (source: AudioSource) => void;
-}
-const AudioAddForm = ({ onAddAudio }: Props) => {
+const AudioAddForm = () => {
+  const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
+  const setAudioBoxs = useSetRecoilState(audioBoxsState);
+
+  const addAudioBox = (src: AudioSource) => {
+    setAudioBoxs((audioBoxs) => [
+      ...audioBoxs,
+      {
+        src,
+        startAt: currentTime,
+      },
+    ]);
+  };
+  const handleAddAudio = (src: AudioSource) => {
+    addAudioBox(src);
+    setCurrentTime((currentTime) => currentTime + src.duration);
+  };
+
   return (
     <ul className="audio-add-form">
       {AUDIO_SAMPLES.map((src) => {
@@ -32,7 +48,7 @@ const AudioAddForm = ({ onAddAudio }: Props) => {
           <li key={url} className="audio-add-button">
             <PlayButton url={url} />
             {name}
-            <button onClick={() => onAddAudio(src)}>➕</button>
+            <button onClick={() => handleAddAudio(src)}>➕</button>
           </li>
         );
       })}

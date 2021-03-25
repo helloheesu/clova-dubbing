@@ -5,24 +5,19 @@ import TimeStep from "./TimeStep";
 import CurrentPositionIndicator from "./CurrentPositionIndicator";
 
 import "./Timeline.scss";
+import { useRecoilState } from "recoil";
+import { currentTimeState } from "../recoil/atoms";
 
 interface props {
   length: millisecond;
   scale: millisecond;
   stepWidth: pixel;
-  currentTime: millisecond;
-  setCurrentTime: React.Dispatch<React.SetStateAction<millisecond>>;
   children: React.ReactNode;
 }
 
-const ProgressBar = ({
-  length,
-  scale,
-  stepWidth,
-  currentTime,
-  setCurrentTime,
-  children,
-}: props) => {
+const ProgressBar = ({ length, scale, stepWidth, children }: props) => {
+  const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
+
   const handleClick = (e) => {
     const offsetX = e.nativeEvent.offsetX;
     const offsetLeft = e.target.offsetLeft;
