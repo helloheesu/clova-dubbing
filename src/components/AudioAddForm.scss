@@ -1,5 +1,17 @@
+@import "../const.scss";
+
 .audio-add-form {
   .audio-add-button {
     display: inline-block;
+    background-color: gray;
+    margin: 5px 3px;
+    border-radius: 3px;
+
+    button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      outline: none;
+    }
   }
 }

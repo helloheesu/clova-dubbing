@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import "./AudioAddForm.scss";
 
-const AUDIO_SAMPLES = [
+const AUDIO_SAMPLES: AudioSource[] = [
   {
     name: "CantinaBand3sec",
     url: "https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand3.wav",
+    duration: 3000,
   },
   {
     name: "preamble",
     url: "https://www2.cs.uic.edu/~i101/SoundFiles/preamble.wav",
+    duration: 19097.959,
   },
   {
     name: "taunt",
     url: "https://www2.cs.uic.edu/~i101/SoundFiles/taunt.wav",
+    duration: 4099.384,
   },
 ];
 
@@ -48,9 +51,9 @@ const AudioAddButton = ({ url, name }: Props) => {
 
   return (
     <div className="audio-add-button">
-      <button onClick={toggle}>
-        {playing ? "⏸" : "▶️"} {name}
-      </button>
+      <button onClick={toggle}>{playing ? "⏸" : "▶️"}</button>
+      {name}
+      <button>➕</button>
     </div>
   );
 };
