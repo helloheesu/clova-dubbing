@@ -17,9 +17,14 @@ const App = () => {
     ]);
   };
 
+  const handleAddAudio = (src: AudioSource) => {
+    addAudioBox(src);
+    setCurrentTime((currentTime) => currentTime + src.duration);
+  };
+
   return (
     <>
-      <AudioAddForm onAddAudio={addAudioBox} />
+      <AudioAddForm onAddAudio={handleAddAudio} />
       <ProgressBar
         length={20000}
         scale={5000}
