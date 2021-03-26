@@ -35174,7 +35174,7 @@ module.hot.accept(reloadCSS);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.stepInfoState = exports.totalInfoState = exports.audioBoxsState = exports.currentTimeState = void 0;
+exports.isPlayingState = exports.stepInfoState = exports.totalInfoState = exports.audioBoxsState = exports.currentTimeState = void 0;
 
 var recoil_1 = require("recoil");
 
@@ -35199,7 +35199,103 @@ exports.stepInfoState = recoil_1.atom({
     width: 160
   }
 });
-},{"recoil":"../node_modules/recoil/es/recoil.js"}],"components/ProgressBar.tsx":[function(require,module,exports) {
+exports.isPlayingState = recoil_1.atom({
+  key: "isPlaying",
+  default: false
+});
+},{"recoil":"../node_modules/recoil/es/recoil.js"}],"utils/hooks.ts":[function(require,module,exports) {
+"use strict";
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.useAnimationFrame = exports.useAudio = void 0;
+
+var react_1 = require("react"); // ref: https://stackoverflow.com/a/47686478
+
+
+var useAudio = function useAudio(url) {
+  var _react_1$useState = react_1.useState(new Audio(url)),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 1),
+      audio = _react_1$useState2[0];
+
+  var _react_1$useState3 = react_1.useState(false),
+      _react_1$useState4 = _slicedToArray(_react_1$useState3, 2),
+      playing = _react_1$useState4[0],
+      setPlaying = _react_1$useState4[1];
+
+  var toggle = function toggle() {
+    return setPlaying(!playing);
+  };
+
+  react_1.useEffect(function () {
+    playing ? audio.play() : audio.pause();
+  }, [playing]);
+
+  var handleEndled = function handleEndled() {
+    return setPlaying(false);
+  };
+
+  react_1.useEffect(function () {
+    audio.addEventListener("ended", handleEndled);
+    return function () {
+      audio.removeEventListener("ended", handleEndled);
+    };
+  }, []);
+  return {
+    playing: playing,
+    toggle: toggle
+  };
+};
+
+exports.useAudio = useAudio; // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+
+var useAnimationFrame = function useAnimationFrame(callback, shouldContine) {
+  var savedCallback = react_1.useRef(null); // Remember the latest callback.
+
+  react_1.useEffect(function () {
+    savedCallback.current = callback;
+  }, [callback]);
+  var playingFrameRef = react_1.useRef(null);
+  var previousTimeRef = react_1.useRef(null);
+  react_1.useEffect(function () {
+    if (!shouldContine) {
+      playingFrameRef.current = null;
+      previousTimeRef.current = null;
+      return;
+    }
+
+    var step = function step(time) {
+      var delta = previousTimeRef.current ? time - previousTimeRef.current : 0;
+      previousTimeRef.current = time;
+      savedCallback.current(delta);
+
+      if (playingFrameRef.current) {
+        playingFrameRef.current = requestAnimationFrame(step);
+      }
+    };
+
+    playingFrameRef.current = requestAnimationFrame(step);
+    return function () {
+      return cancelAnimationFrame(playingFrameRef.current);
+    };
+  }, [shouldContine]);
+};
+
+exports.useAnimationFrame = useAnimationFrame;
+},{"react":"../node_modules/react/index.js"}],"components/ProgressBar.tsx":[function(require,module,exports) {
 "use strict";
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
@@ -35272,6 +35368,8 @@ var recoil_1 = require("recoil");
 
 var atoms_1 = require("../recoil/atoms");
 
+var hooks_1 = require("../utils/hooks");
+
 var ProgressBar = function ProgressBar(_ref) {
   var children = _ref.children;
 
@@ -35287,49 +35385,61 @@ var ProgressBar = function ProgressBar(_ref) {
       currentTime = _recoil_1$useRecoilSt2[0],
       setCurrentTime = _recoil_1$useRecoilSt2[1];
 
+  var _recoil_1$useRecoilSt3 = recoil_1.useRecoilState(atoms_1.isPlayingState),
+      _recoil_1$useRecoilSt4 = _slicedToArray(_recoil_1$useRecoilSt3, 2),
+      isPlaying = _recoil_1$useRecoilSt4[0],
+      setIsPlaying = _recoil_1$useRecoilSt4[1];
+
+  var _react_1$useState = react_1.useState(false),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      hasSeeked = _react_1$useState2[0],
+      setHasSeeked = _react_1$useState2[1];
+
+  var wrapperRef = react_1.useRef(null);
+
   var handleClick = function handleClick(e) {
-    var offsetX = e.nativeEvent.offsetX;
-    var offsetLeft = e.target.offsetLeft;
-    var position = offsetX + offsetLeft;
+    if (isPlaying) {
+      setHasSeeked(true);
+      setIsPlaying(false);
+    }
+
+    var scrollLeft = wrapperRef.current.getBoundingClientRect().x;
+    var clientX = e.clientX;
+    var position = clientX - scrollLeft;
     setCurrentTime(Math.min(time_1.positionToTime(position, stepDuration, stepWidth), totalDuration));
   };
 
-  var playingFrameRef = react_1.useRef(null);
-
-  var handleKeyDown = function handleKeyDown(_ref2) {
-    var code = _ref2.code;
-
-    if (code !== "Space") {
-      return;
+  react_1.useEffect(function () {
+    if (hasSeeked) {
+      setIsPlaying(true);
+      setHasSeeked(false);
     }
-
-    if (playingFrameRef.current) {
-      playingFrameRef.current = null;
-      return;
-    }
-
-    var previousTime = null;
-
-    var step = function step(time) {
-      var delta = previousTime ? time - previousTime : 0;
-      previousTime = time;
-      setCurrentTime(function (currentTime) {
-        if (currentTime + delta > totalDuration) {
-          playingFrameRef.current = null;
-          return totalDuration;
-        } else {
-          return currentTime + delta;
-        }
-      });
-
-      if (playingFrameRef.current) {
-        playingFrameRef.current = requestAnimationFrame(step);
+  }, [hasSeeked]);
+  hooks_1.useAnimationFrame(function (delta) {
+    setCurrentTime(function (currentTime) {
+      if (currentTime + delta > totalDuration) {
+        setIsPlaying(false);
+        return totalDuration;
+      } else {
+        return currentTime + delta;
       }
+    });
+  }, isPlaying);
+  react_1.useEffect(function () {
+    var handleKeyUp = function handleKeyUp(e) {
+      if (e.code !== "Space") {
+        return;
+      }
+
+      e.preventDefault();
+      setIsPlaying(!isPlaying);
     };
 
-    playingFrameRef.current = requestAnimationFrame(step);
-  };
-
+    document.addEventListener("keyup", handleKeyUp);
+    return function () {
+      return document.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [isPlaying]);
   var timesteps = Array.apply(null, Array(Math.floor(totalDuration / stepDuration) + 1)).map(function (_, i) {
     return react_1.default.createElement(TimeStep_1.default, {
       key: i * stepDuration,
@@ -35338,12 +35448,11 @@ var ProgressBar = function ProgressBar(_ref) {
     });
   });
   return react_1.default.createElement("div", {
-    className: "timeline",
-    tabIndex: 0,
-    onKeyPress: handleKeyDown
+    className: "timeline"
   }, react_1.default.createElement("div", {
     className: "wrapper",
-    onClick: handleClick
+    onClick: handleClick,
+    ref: wrapperRef
   }, react_1.default.createElement(CurrentPositionIndicator_1.default, {
     position: time_1.timeToPosition(currentTime, stepDuration, stepWidth),
     time: time_1.localeMs(currentTime)
@@ -35351,65 +35460,7 @@ var ProgressBar = function ProgressBar(_ref) {
 };
 
 exports.default = ProgressBar;
-},{"react":"../node_modules/react/index.js","../utils/time":"utils/time.ts","./TimeStep":"components/TimeStep.tsx","./CurrentPositionIndicator":"components/CurrentPositionIndicator.tsx","./Timeline.scss":"components/Timeline.scss","recoil":"../node_modules/recoil/es/recoil.js","../recoil/atoms":"recoil/atoms.ts"}],"utils/hooks.ts":[function(require,module,exports) {
-"use strict";
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.useAudio = void 0;
-
-var react_1 = require("react"); // ref: https://stackoverflow.com/a/47686478
-
-
-var useAudio = function useAudio(url) {
-  var _react_1$useState = react_1.useState(new Audio(url)),
-      _react_1$useState2 = _slicedToArray(_react_1$useState, 1),
-      audio = _react_1$useState2[0];
-
-  var _react_1$useState3 = react_1.useState(false),
-      _react_1$useState4 = _slicedToArray(_react_1$useState3, 2),
-      playing = _react_1$useState4[0],
-      setPlaying = _react_1$useState4[1];
-
-  var toggle = function toggle() {
-    return setPlaying(!playing);
-  };
-
-  react_1.useEffect(function () {
-    playing ? audio.play() : audio.pause();
-  }, [playing]);
-
-  var handleEndled = function handleEndled() {
-    return setPlaying(false);
-  };
-
-  react_1.useEffect(function () {
-    audio.addEventListener("ended", handleEndled);
-    return function () {
-      audio.removeEventListener("ended", handleEndled);
-    };
-  }, []);
-  return {
-    playing: playing,
-    toggle: toggle
-  };
-};
-
-exports.useAudio = useAudio;
-},{"react":"../node_modules/react/index.js"}],"components/PlayButton.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../utils/time":"utils/time.ts","./TimeStep":"components/TimeStep.tsx","./CurrentPositionIndicator":"components/CurrentPositionIndicator.tsx","./Timeline.scss":"components/Timeline.scss","recoil":"../node_modules/recoil/es/recoil.js","../recoil/atoms":"recoil/atoms.ts","../utils/hooks":"utils/hooks.ts"}],"components/PlayButton.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -35512,6 +35563,7 @@ var AudioAddForm = function AudioAddForm() {
   var addAudioBox = function addAudioBox(src) {
     setAudioBoxs(function (audioBoxs) {
       return [].concat(_toConsumableArray(audioBoxs), [{
+        key: Date.now().toString(),
         src: src,
         startAt: currentTime
       }]);
@@ -35547,6 +35599,26 @@ exports.default = AudioAddForm;
 },{"react":"../node_modules/react/index.js","./PlayButton":"components/PlayButton.tsx","./AudioAddForm.scss":"components/AudioAddForm.scss","recoil":"../node_modules/recoil/es/recoil.js","../recoil/atoms":"recoil/atoms.ts"}],"components/AudioTimeline.tsx":[function(require,module,exports) {
 "use strict";
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -35570,7 +35642,11 @@ var AudioTimeline = function AudioTimeline() {
       stepDuration = _recoil_1$useRecoilVa.duration,
       stepWidth = _recoil_1$useRecoilVa.width;
 
-  var audioBoxs = recoil_1.useRecoilValue(atoms_1.audioBoxsState);
+  var _recoil_1$useRecoilSt = recoil_1.useRecoilState(atoms_1.audioBoxsState),
+      _recoil_1$useRecoilSt2 = _slicedToArray(_recoil_1$useRecoilSt, 2),
+      audioBoxs = _recoil_1$useRecoilSt2[0],
+      setAudioBoxs = _recoil_1$useRecoilSt2[1];
+
   return react_1.default.createElement("ul", {
     className: "audio-box-timeline",
     style: {
@@ -35578,11 +35654,32 @@ var AudioTimeline = function AudioTimeline() {
       height: "200px"
     }
   }, audioBoxs.map(function (_ref) {
-    var src = _ref.src,
+    var key = _ref.key,
+        src = _ref.src,
         startAt = _ref.startAt;
     return react_1.default.createElement("li", {
-      key: "".concat(startAt, "-").concat(src.url),
+      key: key,
       className: "audio-box",
+      tabIndex: 1,
+      onKeyDown: function onKeyDown(e) {
+        if (e.code !== "ArrowLeft" && e.code !== "ArrowRight") {
+          return;
+        }
+
+        e.preventDefault();
+        setAudioBoxs(function (audioBoxs) {
+          var findingKey = key;
+          var audioBoxIndex = audioBoxs.findIndex(function (_ref2) {
+            var key = _ref2.key;
+            return key === findingKey;
+          });
+          return [].concat(_toConsumableArray(audioBoxs.slice(0, audioBoxIndex)), [{
+            key: key,
+            src: src,
+            startAt: e.code === "ArrowRight" ? startAt + 100 : startAt - 100
+          }], _toConsumableArray(audioBoxs.slice(audioBoxIndex + 1)));
+        });
+      },
       style: {
         width: time_1.timeToPosition(src.duration, stepDuration, stepWidth),
         left: "".concat(time_1.timeToPosition(startAt, stepDuration, stepWidth), "px")
@@ -35592,7 +35689,89 @@ var AudioTimeline = function AudioTimeline() {
 };
 
 exports.default = AudioTimeline;
-},{"react":"../node_modules/react/index.js","recoil":"../node_modules/recoil/es/recoil.js","../recoil/atoms":"recoil/atoms.ts","../utils/time":"utils/time.ts"}],"App.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","recoil":"../node_modules/recoil/es/recoil.js","../recoil/atoms":"recoil/atoms.ts","../utils/time":"utils/time.ts"}],"components/AudioController.tsx":[function(require,module,exports) {
+"use strict";
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var react_1 = require("react");
+
+var recoil_1 = require("recoil");
+
+var atoms_1 = require("../recoil/atoms");
+
+var hooks_1 = require("../utils/hooks");
+
+var AudioController = function AudioController() {
+  var audioBoxs = recoil_1.useRecoilValue(atoms_1.audioBoxsState);
+  var isPlaying = recoil_1.useRecoilValue(atoms_1.isPlayingState);
+  var currentTime = recoil_1.useRecoilValue(atoms_1.currentTimeState);
+
+  var _react_1$useState = react_1.useState(null),
+      _react_1$useState2 = _slicedToArray(_react_1$useState, 2),
+      playingAudioBox = _react_1$useState2[0],
+      setPlayingAudio = _react_1$useState2[1];
+
+  var playingAudioRef = react_1.useRef(null);
+  hooks_1.useAnimationFrame(function () {
+    var audioBox = audioBoxs.find(function (_ref) {
+      var src = _ref.src,
+          startAt = _ref.startAt;
+      return currentTime > startAt && currentTime <= startAt + src.duration;
+    });
+    setPlayingAudio(audioBox);
+  }, isPlaying);
+
+  var play = function play() {
+    if (!playingAudioRef.current || !playingAudioBox) {
+      return;
+    }
+
+    var startAt = currentTime - playingAudioBox.startAt;
+    playingAudioRef.current.currentTime = startAt / 1000;
+    playingAudioRef.current.play();
+  };
+
+  react_1.useEffect(function () {
+    if (!playingAudioBox) {
+      return;
+    }
+
+    var audio = new Audio(playingAudioBox.src.url);
+    playingAudioRef.current = audio;
+    play();
+    return function () {
+      return playingAudioRef.current.pause();
+    };
+  }, [playingAudioBox]);
+  react_1.useEffect(function () {
+    var _a;
+
+    if (!isPlaying) {
+      (_a = playingAudioRef.current) === null || _a === void 0 ? void 0 : _a.pause();
+    } else {
+      play();
+    }
+  }, [isPlaying]);
+  return null;
+};
+
+exports.default = AudioController;
+},{"react":"../node_modules/react/index.js","recoil":"../node_modules/recoil/es/recoil.js","../recoil/atoms":"recoil/atoms.ts","../utils/hooks":"utils/hooks.ts"}],"App.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -35617,12 +35796,14 @@ var AudioAddForm_1 = __importDefault(require("./components/AudioAddForm"));
 
 var AudioTimeline_1 = __importDefault(require("./components/AudioTimeline"));
 
+var AudioController_1 = __importDefault(require("./components/AudioController"));
+
 var App = function App() {
-  return react_1.default.createElement(recoil_1.RecoilRoot, null, react_1.default.createElement(AudioAddForm_1.default, null), react_1.default.createElement(ProgressBar_1.default, null, react_1.default.createElement(AudioTimeline_1.default, null)));
+  return react_1.default.createElement(recoil_1.RecoilRoot, null, react_1.default.createElement(AudioAddForm_1.default, null), react_1.default.createElement(ProgressBar_1.default, null, react_1.default.createElement(AudioTimeline_1.default, null)), react_1.default.createElement(AudioController_1.default, null));
 };
 
 exports.default = App;
-},{"react":"../node_modules/react/index.js","recoil":"../node_modules/recoil/es/recoil.js","./App.scss":"App.scss","./components/ProgressBar":"components/ProgressBar.tsx","./components/AudioAddForm":"components/AudioAddForm.tsx","./components/AudioTimeline":"components/AudioTimeline.tsx"}],"index.tsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","recoil":"../node_modules/recoil/es/recoil.js","./App.scss":"App.scss","./components/ProgressBar":"components/ProgressBar.tsx","./components/AudioAddForm":"components/AudioAddForm.tsx","./components/AudioTimeline":"components/AudioTimeline.tsx","./components/AudioController":"components/AudioController.tsx"}],"index.tsx":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -35670,7 +35851,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53266" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55120" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
