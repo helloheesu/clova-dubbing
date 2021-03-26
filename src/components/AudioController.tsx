@@ -23,6 +23,16 @@ const AudioController = () => {
     setPlayingAudio(audioBox);
   }, isPlaying);
 
+  const play = () => {
+    if (!playingAudioRef.current || !playingAudioBox) {
+      return;
+    }
+
+    const startAt = currentTime - playingAudioBox.startAt;
+    playingAudioRef.current.currentTime = startAt / 1000;
+    playingAudioRef.current.play();
+  };
+
   useEffect(() => {
     if (!playingAudioBox) {
       return;
@@ -31,18 +41,16 @@ const AudioController = () => {
     const audio = new Audio(playingAudioBox.src.url);
     playingAudioRef.current = audio;
 
-    const startAt = currentTime - playingAudioBox.startAt;
-    audio.currentTime = startAt / 1000;
+    play();
 
-    audio.play();
-    return () => audio.pause();
+    return () => playingAudioRef.current.pause();
   }, [playingAudioBox]);
 
   useEffect(() => {
     if (!isPlaying) {
       playingAudioRef.current?.pause();
     } else {
-      playingAudioRef.current?.play();
+      play();
     }
   }, [isPlaying]);
 

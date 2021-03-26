@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { localeMs, positionToTime, timeToPosition } from "../utils/time";
 
 import TimeStep from "./TimeStep";
@@ -26,8 +26,15 @@ const ProgressBar = ({ children }: props) => {
   const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
 
+  const [hasSeeked, setHasSeeked] = useState(false);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const handleClick = (e) => {
+    if (isPlaying) {
+      setHasSeeked(true);
+      setIsPlaying(false);
+    }
+
     const scrollLeft = wrapperRef.current.getBoundingClientRect().x;
     const clientX = e.clientX;
     const position = clientX - scrollLeft;
@@ -35,6 +42,13 @@ const ProgressBar = ({ children }: props) => {
       Math.min(positionToTime(position, stepDuration, stepWidth), totalDuration)
     );
   };
+
+  useEffect(() => {
+    if (hasSeeked) {
+      setIsPlaying(true);
+      setHasSeeked(false);
+    }
+  }, [hasSeeked]);
 
   useAnimationFrame((delta) => {
     setCurrentTime((currentTime) => {
