@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import {
   audioBoxsState,
@@ -13,6 +13,7 @@ const AudioController = () => {
   const currentTime = useRecoilValue(currentTimeState);
 
   const [playingAudioBox, setPlayingAudio] = useState<AudioBox>(null);
+  const playingAudioRef = useRef<HTMLAudioElement>(null);
 
   useAnimationFrame(() => {
     const audioBox = audioBoxs.find(
@@ -28,13 +29,17 @@ const AudioController = () => {
     }
 
     const audio = new Audio(playingAudioBox.src.url);
+    playingAudioRef.current = audio;
+
     audio.play();
     return () => audio.pause();
   }, [playingAudioBox]);
 
   useEffect(() => {
     if (!isPlaying) {
-      setPlayingAudio(null);
+      playingAudioRef.current?.pause();
+    } else {
+      playingAudioRef.current?.play();
     }
   }, [isPlaying]);
 
