@@ -23,10 +23,11 @@ const ProgressBar = ({ children }: props) => {
   );
   const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const handleClick = (e) => {
-    const offsetX = e.nativeEvent.offsetX;
-    const offsetLeft = e.target.offsetLeft;
-    const position = offsetX + offsetLeft;
+    const scrollLeft = wrapperRef.current.getBoundingClientRect().x;
+    const clientX = e.clientX;
+    const position = clientX - scrollLeft;
     setCurrentTime(
       Math.min(positionToTime(position, stepDuration, stepWidth), totalDuration)
     );
@@ -86,7 +87,7 @@ const ProgressBar = ({ children }: props) => {
 
   return (
     <div className="timeline">
-      <div className="wrapper" onClick={handleClick}>
+      <div className="wrapper" onClick={handleClick} ref={wrapperRef}>
         <CurrentPositionIndicator
           position={timeToPosition(currentTime, stepDuration, stepWidth)}
           time={localeMs(currentTime)}
