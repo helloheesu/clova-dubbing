@@ -2,6 +2,12 @@ body {
   margin: 0;
 }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 body {
   background-color: #171717;
   color: #fff;
@@ -33,6 +39,7 @@ body {
   background-color: transparent;
 }
 .timeline .wrapper {
+  position: relative;
   display: inline-block;
   margin: 0 24px 16px;
   background-color: black;
@@ -40,11 +47,11 @@ body {
 .timeline .timestep {
   background-color: lightgray;
   display: inline-block;
-  width: 400px;
   padding: 16px 0;
 }
 .timeline .position-indicator {
   position: absolute;
+  z-index: 1;
   left: 0;
   background-color: #ff3336;
   width: 1px;
@@ -56,6 +63,18 @@ body {
   top: 40px;
   padding: 3px 4px;
   border-radius: 7px;
+}
+
+.audio-box-timeline {
+  position: relative;
+}
+.audio-box-timeline .audio-box {
+  background-color: black;
+  border-radius: 3px;
+  border: 1px solid yellow;
+  box-sizing: border-box;
+  display: inline-block;
+  position: absolute;
 }
 .audio-add-form .audio-add-button {
   display: inline-block;
