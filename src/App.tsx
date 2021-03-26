@@ -4,6 +4,7 @@ import "./App.scss";
 import ProgressBar from "./components/ProgressBar";
 import AudioAddForm from "./components/AudioAddForm";
 import AudioTimeline from "./components/AudioTimeline";
+import AudioController from "./components/AudioController";
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <ProgressBar>
         <AudioTimeline />
       </ProgressBar>
+      <AudioController />
     </RecoilRoot>
   );
 };
