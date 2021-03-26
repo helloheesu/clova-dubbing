@@ -30,6 +30,7 @@ const AudioAddForm = () => {
     setAudioBoxs((audioBoxs) => [
       ...audioBoxs,
       {
+        key: Date.now().toString(),
         src,
         startAt: currentTime,
       },

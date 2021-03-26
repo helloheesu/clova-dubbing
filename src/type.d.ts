@@ -9,6 +9,7 @@ type AudioSource = {
 };
 
 type AudioBox = {
+  key: string;
   src: AudioSource;
   startAt: millisecond;
 };

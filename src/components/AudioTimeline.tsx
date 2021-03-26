@@ -14,10 +14,10 @@ const AudioTimeline = () => {
       className="audio-box-timeline"
       style={{ backgroundColor: "yellow", height: "200px" }}
     >
-      {audioBoxs.map(({ src, startAt }) => {
+      {audioBoxs.map(({ key, src, startAt }) => {
         return (
           <li
-            key={`${startAt}-${src.url}`}
+            key={key}
             className="audio-box"
             tabIndex={1}
             onKeyDown={(e) => {
@@ -28,14 +28,15 @@ const AudioTimeline = () => {
               e.preventDefault();
 
               setAudioBoxs((audioBoxs) => {
-                const findingUrl = src.url;
+                const findingKey = key;
                 const audioBoxIndex = audioBoxs.findIndex(
-                  ({ src }) => src.url === findingUrl
+                  ({ key }) => key === findingKey
                 );
 
                 return [
                   ...audioBoxs.slice(0, audioBoxIndex),
                   {
+                    key,
                     src,
                     startAt:
                       e.code === "ArrowRight" ? startAt + 100 : startAt - 100,
