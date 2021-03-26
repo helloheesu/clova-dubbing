@@ -12,6 +12,7 @@ import {
   stepInfoState,
   totalInfoState,
 } from "../recoil/atoms";
+import { useAnimationFrame } from "../utils/hooks";
 
 interface props {
   children: React.ReactNode;
@@ -35,38 +36,16 @@ const ProgressBar = ({ children }: props) => {
     );
   };
 
-  const playingFrameRef = useRef(null);
-  const previousTimeRef = useRef(null);
-  useEffect(() => {
-    if (!isPlaying) {
-      playingFrameRef.current = null;
-      previousTimeRef.current = null;
-      return;
-    }
-
-    const step = (time) => {
-      const delta = previousTimeRef.current
-        ? time - previousTimeRef.current
-        : 0;
-      previousTimeRef.current = time;
-
-      setCurrentTime((currentTime) => {
-        if (currentTime + delta > totalDuration) {
-          playingFrameRef.current = null;
-          return totalDuration;
-        } else {
-          return currentTime + delta;
-        }
-      });
-
-      if (playingFrameRef.current) {
-        playingFrameRef.current = requestAnimationFrame(step);
+  useAnimationFrame((delta) => {
+    setCurrentTime((currentTime) => {
+      if (currentTime + delta > totalDuration) {
+        setIsPlaying(false);
+        return totalDuration;
+      } else {
+        return currentTime + delta;
       }
-    };
-
-    playingFrameRef.current = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(playingFrameRef.current);
-  }, [isPlaying]);
+    });
+  }, isPlaying);
 
   useEffect(() => {
     const handleKeyUp = (e) => {
