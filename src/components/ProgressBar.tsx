@@ -35,10 +35,12 @@ const ProgressBar = ({ children }: props) => {
   const playingFrameRef = useRef(null);
 
   useEffect(() => {
-    const handleKeyUp = ({ code }) => {
-      if (code !== "Space") {
+    const handleKeyUp = (e) => {
+      if (e.code !== "Space") {
         return;
       }
+
+      e.preventDefault();
 
       if (playingFrameRef.current) {
         playingFrameRef.current = null;
