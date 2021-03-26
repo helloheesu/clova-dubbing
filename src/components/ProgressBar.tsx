@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { localeMs, positionToTime, timeToPosition } from "../utils/time";
 
 import TimeStep from "./TimeStep";
@@ -33,37 +33,43 @@ const ProgressBar = ({ children }: props) => {
   };
 
   const playingFrameRef = useRef(null);
-  const handleKeyDown = ({ code }) => {
-    if (code !== "Space") {
-      return;
-    }
 
-    if (playingFrameRef.current) {
-      playingFrameRef.current = null;
-      return;
-    }
-
-    let previousTime = null;
-    const step = (time) => {
-      const delta = previousTime ? time - previousTime : 0;
-      previousTime = time;
-
-      setCurrentTime((currentTime) => {
-        if (currentTime + delta > totalDuration) {
-          playingFrameRef.current = null;
-          return totalDuration;
-        } else {
-          return currentTime + delta;
-        }
-      });
+  useEffect(() => {
+    const handleKeyUp = ({ code }) => {
+      if (code !== "Space") {
+        return;
+      }
 
       if (playingFrameRef.current) {
-        playingFrameRef.current = requestAnimationFrame(step);
+        playingFrameRef.current = null;
+        return;
       }
+
+      let previousTime = null;
+      const step = (time) => {
+        const delta = previousTime ? time - previousTime : 0;
+        previousTime = time;
+
+        setCurrentTime((currentTime) => {
+          if (currentTime + delta > totalDuration) {
+            playingFrameRef.current = null;
+            return totalDuration;
+          } else {
+            return currentTime + delta;
+          }
+        });
+
+        if (playingFrameRef.current) {
+          playingFrameRef.current = requestAnimationFrame(step);
+        }
+      };
+
+      playingFrameRef.current = requestAnimationFrame(step);
     };
 
-    playingFrameRef.current = requestAnimationFrame(step);
-  };
+    document.addEventListener("keyup", handleKeyUp);
+    return () => document.removeEventListener("keyup", handleKeyUp);
+  }, []);
 
   const timesteps = Array.apply(
     null,
@@ -77,7 +83,7 @@ const ProgressBar = ({ children }: props) => {
   ));
 
   return (
-    <div className="timeline" tabIndex={0} onKeyPress={handleKeyDown}>
+    <div className="timeline">
       <div className="wrapper" onClick={handleClick}>
         <CurrentPositionIndicator
           position={timeToPosition(currentTime, stepDuration, stepWidth)}
