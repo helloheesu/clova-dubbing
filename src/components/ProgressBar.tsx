@@ -8,6 +8,7 @@ import "./Timeline.scss";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentTimeState,
+  isPlayingState,
   stepInfoState,
   totalInfoState,
 } from "../recoil/atoms";
@@ -22,6 +23,7 @@ const ProgressBar = ({ children }: props) => {
     stepInfoState
   );
   const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
+  const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const handleClick = (e) => {
@@ -34,6 +36,37 @@ const ProgressBar = ({ children }: props) => {
   };
 
   const playingFrameRef = useRef(null);
+  const previousTimeRef = useRef(null);
+  useEffect(() => {
+    if (!isPlaying) {
+      playingFrameRef.current = null;
+      previousTimeRef.current = null;
+      return;
+    }
+
+    const step = (time) => {
+      const delta = previousTimeRef.current
+        ? time - previousTimeRef.current
+        : 0;
+      previousTimeRef.current = time;
+
+      setCurrentTime((currentTime) => {
+        if (currentTime + delta > totalDuration) {
+          playingFrameRef.current = null;
+          return totalDuration;
+        } else {
+          return currentTime + delta;
+        }
+      });
+
+      if (playingFrameRef.current) {
+        playingFrameRef.current = requestAnimationFrame(step);
+      }
+    };
+
+    playingFrameRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(playingFrameRef.current);
+  }, [isPlaying]);
 
   useEffect(() => {
     const handleKeyUp = (e) => {
@@ -42,37 +75,12 @@ const ProgressBar = ({ children }: props) => {
       }
 
       e.preventDefault();
-
-      if (playingFrameRef.current) {
-        playingFrameRef.current = null;
-        return;
-      }
-
-      let previousTime = null;
-      const step = (time) => {
-        const delta = previousTime ? time - previousTime : 0;
-        previousTime = time;
-
-        setCurrentTime((currentTime) => {
-          if (currentTime + delta > totalDuration) {
-            playingFrameRef.current = null;
-            return totalDuration;
-          } else {
-            return currentTime + delta;
-          }
-        });
-
-        if (playingFrameRef.current) {
-          playingFrameRef.current = requestAnimationFrame(step);
-        }
-      };
-
-      playingFrameRef.current = requestAnimationFrame(step);
+      setIsPlaying(!isPlaying);
     };
 
     document.addEventListener("keyup", handleKeyUp);
     return () => document.removeEventListener("keyup", handleKeyUp);
-  }, []);
+  }, [isPlaying]);
 
   const timesteps = Array.apply(
     null,

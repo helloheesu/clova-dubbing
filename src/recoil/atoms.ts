@@ -21,3 +21,7 @@ export const stepInfoState = atom({
     width: 160,
   },
 });
+export const isPlayingState = atom<boolean>({
+  key: "isPlaying",
+  default: false,
+});
