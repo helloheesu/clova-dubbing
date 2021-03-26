@@ -31,6 +31,9 @@ const AudioController = () => {
     const audio = new Audio(playingAudioBox.src.url);
     playingAudioRef.current = audio;
 
+    const startAt = currentTime - playingAudioBox.startAt;
+    audio.currentTime = startAt / 1000;
+
     audio.play();
     return () => audio.pause();
   }, [playingAudioBox]);
